@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>🔌 Smart Power Outlet Control (REST)</title>
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box}
+    body{font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;background:linear-gradient(135deg,#667eea 0%,#764ba2 100%);color:#fff;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:20px}
+    .header{text-align:center;margin-bottom:30px}
+    .header h1{font-size:2.5rem;margin-bottom:10px;text-shadow:2px 2px 4px rgba(0,0,0,.3)}
+    .status-indicator{display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.1);padding:10px 20px;border-radius:20px;backdrop-filter:blur(10px)}
+    .status-dot{width:12px;height:12px;border-radius:50%;background:#ff4444;animation:pulse 2s infinite}
+    .status-dot.connected{background:#44ff44}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
+    .main-container{display:grid;grid-template-columns:1fr 1fr;gap:30px;width:100%;max-width:800px;align-items:start}
+    .control-section{background:rgba(255,255,255,.1);padding:30px;border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);text-align:center}
+    .control-section h3{margin-bottom:25px;font-size:1.5rem;color:#ffd700}
+    .outlet-visual{width:120px;height:120px;margin:0 auto 20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3rem;transition:all .3s ease;border:3px solid rgba(255,255,255,.3)}
+    .outlet-visual.on{background:linear-gradient(145deg,#44ff44,#32d742);box-shadow:0 0 30px rgba(68,255,68,.4);border-color:#44ff44}
+    .outlet-visual.off{background:linear-gradient(145deg,#666,#444);box-shadow:0 0 10px rgba(0,0,0,.3)}
+    .power-button{width:150px;height:150px;border-radius:50%;border:none;font-size:2rem;cursor:pointer;transition:all .3s ease;margin:20px auto;display:block;position:relative;overflow:hidden}
+    .power-button.on{background:linear-gradient(145deg,#ff4757,#c44569);color:#fff;box-shadow:0 8px 25px rgba(255,71,87,.4)}
+    .power-button.off{background:linear-gradient(145deg,#44ff44,#32d742);color:#fff;box-shadow:0 8px 25px rgba(68,255,68,.4)}
+    .power-button:hover{transform:scale(1.05)}
+    .power-button:active{transform:scale(.95)}
+    .status-grid{display:grid;grid-template-columns:1fr;gap:15px}
+    .status-item{background:rgba(255,255,255,.05);padding:15px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
+    .status-label{font-weight:500;color:#ccc}
+    .status-value{font-weight:700;color:#ffd700;font-size:1.1rem}
+    .usage-log{grid-column:span 2;background:rgba(255,255,255,.1);padding:25px;border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);margin-top:20px}
+    .usage-log h3{margin-bottom:20px;font-size:1.4rem;color:#ffd700;text-align:center}
+    .log-entry{background:rgba(255,255,255,.05);padding:12px;margin-bottom:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;border-left:4px solid transparent}
+    .log-entry.on{border-left-color:#44ff44}
+    .log-entry.off{border-left-color:#ff4444}
+    .log-time{color:#aaa;font-size:.9rem}
+    .log-action{font-weight:700}
+    .log-action.on{color:#44ff44}
+    .log-action.off{color:#ff4444}
+    .clear-log-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;padding:10px 20px;border-radius:10px;cursor:pointer;margin-top:15px;transition:all .3s ease}
+    .clear-log-btn:hover{background:rgba(255,255,255,.2)}
+    @media (max-width:768px){.main-container{grid-template-columns:1fr;gap:20px}.usage-log{grid-column:span 1}.header h1{font-size:2rem}}
+    .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>🔌 Smart Power Outlet</h1>
+    <div class="status-indicator">
+      <div class="status-dot" id="connectionDot"></div>
+      <span id="connectionStatus">Connecting...</span>
+    </div>
+  </div>
+
+  <div class="main-container">
+    <!-- Control Panel -->
+    <div class="control-section">
+      <h3>🎛️ Outlet Control (REST)</h3>
+      <div class="outlet-visual off" id="outletVisual">🔌</div>
+      <div id="outletState" style="font-size:1.3rem;margin-bottom:20px;font-weight:bold;">OFF</div>
+      <button class="power-button off" id="powerButton">🔴 Turn ON</button>
+    </div>
+
+    <!-- Status Display -->
+    <div class="control-section">
+      <h3>📊 System Status</h3>
+      <div class="status-grid">
+        <div class="status-item"><span class="status-label">Current State:</span><span class="status-value" id="currentState">OFF</span></div>
+        <div class="status-item"><span class="status-label">Uptime:</span><span class="status-value" id="uptime">00:00:00</span></div>
+        <div class="status-item"><span class="status-label">Last Changed:</span><span class="status-value" id="lastChanged">--</span></div>
+        <div class="status-item"><span class="status-label">Total Switches:</span><span class="status-value" id="totalSwitches">0</span></div>
+        <div class="status-item"><span class="status-label">System Health:</span><span class="status-value" id="systemHealth">OK</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Usage Log -->
+  <div class="usage-log">
+    <h3>📋 Usage Log</h3>
+    <div id="usageLogContainer">
+      <div class="log-entry">
+        <span>System initialized</span>
+        <span class="log-time" id="initTime">--</span>
+      </div>
+    </div>
+    <button class="clear-log-btn" onclick="clearUsageLog()">🗑️ Clear Log</button>
+  </div>
+
+  <script>
+    const HOST = "https://realtime-6809c-default-rtdb.firebaseio.com";
+    const BASE = "/smart_outlet";
+    const PATHS = {
+      outlet: `${BASE}/outlet.json`,
+      outletState: `${BASE}/outlet/state.json`,
+      system: `${BASE}/system.json`,
+      systemHeartbeat: `${BASE}/system/lastHeartbeat.json`,
+      logs: `${BASE}/logs.json`
+    };
+
+    const withAuth = (url) => url; 
+
+    // ======== UI refs ========
+    const connectionDot = document.getElementById('connectionDot');
+    const connectionStatus = document.getElementById('connectionStatus');
+    const outletVisual = document.getElementById('outletVisual');
+    const outletStateEl = document.getElementById('outletState');
+    const powerButton = document.getElementById('powerButton');
+    const currentStateEl = document.getElementById('currentState');
+    const lastChangedEl = document.getElementById('lastChanged');
+    const totalSwitchesEl = document.getElementById('totalSwitches');
+    const systemHealthEl = document.getElementById('systemHealth');
+    const usageLogContainer = document.getElementById('usageLogContainer');
+
+    // ======== Local state ========
+    let isConnected = false;
+    let startTime = Date.now();
+    let currentOutletState = false;
+    let totalSwitches = 0;
+
+    // ======== Utils ========
+    const fmtTime = (d) => new Date(d).toLocaleTimeString();
+
+    function updateConnectionStatus(connected) {
+      isConnected = connected;
+      if (connected) {
+        connectionDot.classList.add('connected');
+        connectionStatus.textContent = 'Connected';
+      } else {
+        connectionDot.classList.remove('connected');
+        connectionStatus.textContent = 'Disconnected';
+      }
+    }
+
+    function drawOutlet(state, lastChangedTs, switches) {
+      currentOutletState = !!state;
+      totalSwitches = switches ?? totalSwitches;
+
+      if (currentOutletState) {
+        outletVisual.className = 'outlet-visual on';
+        outletStateEl.textContent = 'ON';
+        outletStateEl.style.color = '#44ff44';
+        powerButton.className = 'power-button on';
+        powerButton.textContent = '🟢 Turn OFF';
+        currentStateEl.textContent = 'ON';
+        currentStateEl.style.color = '#44ff44';
+      } else {
+        outletVisual.className = 'outlet-visual off';
+        outletStateEl.textContent = 'OFF';
+        outletStateEl.style.color = '#ff4444';
+        powerButton.className = 'power-button off';
+        powerButton.textContent = '🔴 Turn ON';
+        currentStateEl.textContent = 'OFF';
+        currentStateEl.style.color = '#ff4444';
+      }
+
+      if (lastChangedTs) {
+        lastChangedEl.textContent = fmtTime(lastChangedTs);
+      }
+      totalSwitchesEl.textContent = totalSwitches;
+    }
+
+    function addLogEntry(action) {
+      const entry = document.createElement('div');
+      entry.className = `log-entry ${action ? 'on' : 'off'}`;
+      entry.innerHTML = `
+        <span class="log-action ${action ? 'on' : 'off'}">${action ? 'Turned ON' : 'Turned OFF'}</span>
+        <span class="log-time">${new Date().toLocaleTimeString()}</span>
+      `;
+      const first = usageLogContainer.firstElementChild;
+      if (first) usageLogContainer.insertBefore(entry, first.nextSibling);
+      else usageLogContainer.appendChild(entry);
+
+      const entries = usageLogContainer.querySelectorAll('.log-entry');
+      if (entries.length > 11) usageLogContainer.removeChild(entries[entries.length - 1]);
+    }
+
+    window.clearUsageLog = function () {
+      const first = usageLogContainer.firstElementChild;
+      usageLogContainer.innerHTML = '';
+      if (first) usageLogContainer.appendChild(first);
+    };
+
+    // ======== REST helpers ========
+    async function restGET(path) {
+      const res = await fetch(withAuth(`${HOST}${path}`));
+      if (!res.ok) throw new Error(`GET ${path} -> ${res.status}`);
+      return res.json();
+    }
+
+    async function restPUT(path, data) {
+      const res = await fetch(withAuth(`${HOST}${path}`), {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (!res.ok) throw new Error(`PUT ${path} -> ${res.status}`);
+      return res.json();
+    }
+
+    async function restPATCH(path, obj) {
+      const res = await fetch(withAuth(`${HOST}${path}`), {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(obj)
+      });
+      if (!res.ok) throw new Error(`PATCH ${path} -> ${res.status}`);
+      return res.json();
+    }
+
+    // ======== Init DB structure (once) ========
+    async function ensureStructure() {
+      try {
+        const root = await restGET(BASE + '.json');
+        if (!root) {
+          await restPUT(BASE + '.json', {
+            outlet: { state: false, lastChanged: Date.now(), totalSwitches: 0, uptime: 0 },
+            system: { health: 'OK', connected: true, lastHeartbeat: Date.now() },
+            logs:   { action: false, at: Date.now() }
+          });
+        }
+        updateConnectionStatus(true);
+      } catch (e) {
+        console.error(e);
+        updateConnectionStatus(false);
+      }
+    }
+
+    // ======== Polling loops ========
+    async function pollOutlet() {
+      try {
+        const data = await restGET(PATHS.outlet);
+        if (data && typeof data.state === 'boolean') {
+          drawOutlet(data.state, data.lastChanged, data.totalSwitches ?? 0);
+        }
+        updateConnectionStatus(true);
+      } catch (e) {
+        console.warn('pollOutlet:', e.message);
+        updateConnectionStatus(false);
+      }
+    }
+
+    async function heartbeat() {
+      try {
+        await restPUT(PATHS.systemHeartbeat, Date.now());
+        updateConnectionStatus(true);
+      } catch (e) {
+        console.warn('heartbeat:', e.message);
+        updateConnectionStatus(false);
+      }
+    }
+
+    // ======== UI handlers ========
+    powerButton.addEventListener('click', async () => {
+      const newState = !currentOutletState;
+      try {
+        await restPUT(PATHS.outlet, {
+          state: newState,
+          lastChanged: Date.now(),
+          totalSwitches: (totalSwitches ?? 0) + 1,
+          uptime: Math.floor((Date.now() - startTime) / 1000)
+        });
+
+        await restPUT(PATHS.logs, {
+          action: newState,
+          at: Date.now()
+        });
+
+        addLogEntry(newState);
+        drawOutlet(newState, Date.now(), (totalSwitches ?? 0) + 1);
+        updateConnectionStatus(true);
+      } catch (e) {
+        console.error('switch error:', e.message);
+        updateConnectionStatus(false);
+      }
+    });
+
+    // ======== Uptime display ========
+    function startUptimeCounter() {
+      setInterval(() => {
+        const sec = Math.floor((Date.now() - startTime) / 1000);
+        const hh = String(Math.floor(sec / 3600)).padStart(2, '0');
+        const mm = String(Math.floor((sec % 3600) / 60)).padStart(2, '0');
+        const ss = String(sec % 60).padStart(2, '0');
+        document.getElementById('uptime').textContent = `${hh}:${mm}:${ss}`;
+      }, 1000);
+    }
+
+    // ======== Boot ========
+    (function boot(){
+      document.getElementById('initTime').textContent = new Date().toLocaleTimeString();
+      ensureStructure().then(() => {
+        pollOutlet();                  
+        setInterval(pollOutlet, 2000); 
+        setInterval(heartbeat, 30000); 
+        startUptimeCounter();
+      });
+    })();
+  </script>
+</body>
+</html>
