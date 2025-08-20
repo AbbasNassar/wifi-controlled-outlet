@@ -13,7 +13,7 @@
     .status-dot{width:12px;height:12px;border-radius:50%;background:#ff4444;animation:pulse 2s infinite}
     .status-dot.connected{background:#44ff44}
     @keyframes pulse{0%,100%{opacity:1}50%{opacity:.5}}
-    .main-container{display:grid;grid-template-columns:1fr 1fr;gap:30px;width:100%;max-width:800px;align-items:start}
+    .main-container{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:25px;width:100%;max-width:1400px;align-items:start}
     .control-section{background:rgba(255,255,255,.1);padding:30px;border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);text-align:center}
     .control-section h3{margin-bottom:25px;font-size:1.5rem;color:#ffd700}
     .outlet-visual{width:120px;height:120px;margin:0 auto 20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:3rem;transition:all .3s ease;border:3px solid rgba(255,255,255,.3)}
@@ -28,18 +28,62 @@
     .status-item{background:rgba(255,255,255,.05);padding:15px;border-radius:10px;display:flex;justify-content:space-between;align-items:center}
     .status-label{font-weight:500;color:#ccc}
     .status-value{font-weight:700;color:#ffd700;font-size:1.1rem}
-    .usage-log{grid-column:span 2;background:rgba(255,255,255,.1);padding:25px;border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);margin-top:20px}
+    .usage-log{grid-column:span 4;background:rgba(255,255,255,.1);padding:25px;border-radius:20px;backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.2);margin-top:20px}
     .usage-log h3{margin-bottom:20px;font-size:1.4rem;color:#ffd700;text-align:center}
     .log-entry{background:rgba(255,255,255,.05);padding:12px;margin-bottom:10px;border-radius:8px;display:flex;justify-content:space-between;align-items:center;border-left:4px solid transparent}
     .log-entry.on{border-left-color:#44ff44}
     .log-entry.off{border-left-color:#ff4444}
+    .log-entry.timer{border-left-color:#ffd700}
+    .log-entry.schedule{border-left-color:#9b59b6}
     .log-time{color:#aaa;font-size:.9rem}
     .log-action{font-weight:700}
     .log-action.on{color:#44ff44}
     .log-action.off{color:#ff4444}
+    .log-action.timer{color:#ffd700}
+    .log-action.schedule{color:#9b59b6}
     .clear-log-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;padding:10px 20px;border-radius:10px;cursor:pointer;margin-top:15px;transition:all .3s ease}
     .clear-log-btn:hover{background:rgba(255,255,255,.2)}
-    @media (max-width:768px){.main-container{grid-template-columns:1fr;gap:20px}.usage-log{grid-column:span 1}.header h1{font-size:2rem}}
+    
+    /* Timer Section Styles */
+    .timer-controls{display:flex;flex-direction:column;gap:15px;align-items:center}
+    .timer-input-group{display:flex;align-items:center;gap:10px;margin-bottom:15px}
+    .timer-input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;padding:10px;border-radius:8px;width:80px;text-align:center;font-size:1rem}
+    .timer-input::placeholder{color:#aaa}
+    .timer-label{color:#ccc;font-size:.9rem;min-width:60px}
+    .timer-button{background:linear-gradient(145deg,#ffd700,#ffb700);color:#333;border:none;padding:12px 24px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:1rem;transition:all .3s ease;margin:5px}
+    .timer-button:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(255,215,0,.4)}
+    .timer-button:disabled{background:#666;color:#aaa;cursor:not-allowed;transform:none}
+    .timer-status{margin:15px 0;padding:15px;background:rgba(255,255,255,.1);border-radius:10px;border-left:4px solid #ffd700}
+    .timer-countdown{font-size:1.8rem;color:#ffd700;font-weight:bold;margin:10px 0}
+    .timer-cancel{background:linear-gradient(145deg,#ff4757,#c44569);color:#fff}
+    .quick-timer-buttons{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:15px}
+    .quick-timer-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;padding:8px 12px;border-radius:6px;cursor:pointer;font-size:.9rem;transition:all .3s ease}
+    .quick-timer-btn:hover{background:rgba(255,255,255,.2)}
+    
+    /* Schedule Section Styles */
+    .schedule-controls{display:flex;flex-direction:column;gap:15px;align-items:center}
+    .time-range-group{background:rgba(255,255,255,.05);padding:15px;border-radius:10px;margin-bottom:10px;border:1px solid rgba(255,255,255,.1)}
+    .time-range-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px}
+    .time-range-title{color:#9b59b6;font-weight:bold;font-size:1.1rem}
+    .delete-range-btn{background:#ff4757;border:none;color:#fff;width:25px;height:25px;border-radius:50%;cursor:pointer;font-size:0.8rem;transition:all .3s ease}
+    .delete-range-btn:hover{background:#c44569;transform:scale(1.1)}
+    .time-inputs{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:center}
+    .time-input{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.3);color:#fff;padding:8px;border-radius:6px;width:80px;text-align:center;font-size:0.9rem}
+    .time-separator{color:#9b59b6;font-weight:bold;font-size:1.2rem}
+    .schedule-button{background:linear-gradient(145deg,#9b59b6,#8e44ad);color:#fff;border:none;padding:12px 24px;border-radius:10px;cursor:pointer;font-weight:bold;font-size:1rem;transition:all .3s ease;margin:5px}
+    .schedule-button:hover{transform:translateY(-2px);box-shadow:0 5px 15px rgba(155,89,182,.4)}
+    .schedule-button:disabled{background:#666;color:#aaa;cursor:not-allowed;transform:none}
+    .schedule-status{margin:15px 0;padding:15px;background:rgba(255,255,255,.1);border-radius:10px;border-left:4px solid #9b59b6}
+    .current-schedule{font-size:1.1rem;color:#9b59b6;font-weight:bold;margin:10px 0}
+    .schedule-toggle{background:linear-gradient(145deg,#ff4757,#c44569);color:#fff}
+    .schedule-enabled{background:linear-gradient(145deg,#27ae60,#229954);color:#fff}
+    .add-range-btn{background:rgba(155,89,182,.2);border:1px solid #9b59b6;color:#9b59b6;padding:10px 20px;border-radius:8px;cursor:pointer;font-size:0.9rem;transition:all .3s ease;margin-bottom:15px}
+    .add-range-btn:hover{background:rgba(155,89,182,.3)}
+    .no-ranges{color:#aaa;font-style:italic;padding:20px;text-align:center}
+    
+    @media (max-width:1200px){.main-container{grid-template-columns:1fr 1fr}.usage-log{grid-column:span 2}}
+    @media (max-width:1024px){.main-container{grid-template-columns:1fr 1fr}.usage-log{grid-column:span 2}}
+    @media (max-width:768px){.main-container{grid-template-columns:1fr;gap:20px}.usage-log{grid-column:span 1}.header h1{font-size:2rem}.timer-input-group{flex-direction:column;gap:5px}.quick-timer-buttons{justify-content:center}}
     .loading{display:inline-block;width:20px;height:20px;border:3px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
   </style>
@@ -62,6 +106,64 @@
       <button class="power-button off" id="powerButton">🔴 Turn ON</button>
     </div>
 
+    <!-- Timer Control Panel -->
+    <div class="control-section">
+      <h3>⏰ Timer Control</h3>
+      <div class="timer-controls">
+        <div class="timer-input-group">
+          <span class="timer-label">Hours:</span>
+          <input type="number" class="timer-input" id="hoursInput" min="0" max="23" value="0" placeholder="0">
+        </div>
+        <div class="timer-input-group">
+          <span class="timer-label">Minutes:</span>
+          <input type="number" class="timer-input" id="minutesInput" min="0" max="59" value="0" placeholder="0">
+        </div>
+        <div class="timer-input-group">
+          <span class="timer-label">Seconds:</span>
+          <input type="number" class="timer-input" id="secondsInput" min="0" max="59" value="0" placeholder="0">
+        </div>
+        
+        <div class="quick-timer-buttons">
+          <button class="quick-timer-btn" onclick="setQuickTimer(0,0,30)">30s</button>
+          <button class="quick-timer-btn" onclick="setQuickTimer(0,1,0)">1m</button>
+          <button class="quick-timer-btn" onclick="setQuickTimer(0,5,0)">5m</button>
+          <button class="quick-timer-btn" onclick="setQuickTimer(0,10,0)">10m</button>
+          <button class="quick-timer-btn" onclick="setQuickTimer(0,30,0)">30m</button>
+          <button class="quick-timer-btn" onclick="setQuickTimer(1,0,0)">1h</button>
+        </div>
+        
+        <button class="timer-button" id="startTimerBtn" onclick="startTimer()">⏰ Start Timer</button>
+        <button class="timer-button timer-cancel" id="cancelTimerBtn" onclick="cancelTimer()" style="display:none">❌ Cancel Timer</button>
+        
+        <div class="timer-status" id="timerStatus" style="display:none">
+          <div>Timer Active</div>
+          <div class="timer-countdown" id="timerCountdown">00:00:00</div>
+          <div id="timerAction">Will turn OFF in:</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Schedule Control Panel -->
+    <div class="control-section">
+      <h3>📅 Schedule Control</h3>
+      <div class="schedule-controls">
+        <div class="schedule-status">
+          <div>Schedule Status</div>
+          <div class="current-schedule" id="scheduleStatusText">Disabled</div>
+          <div id="currentRangeText">No active ranges</div>
+        </div>
+        
+        <button class="add-range-btn" onclick="addTimeRange()">➕ Add Time Range</button>
+        
+        <div id="timeRangesContainer">
+          <div class="no-ranges">No time ranges configured</div>
+        </div>
+        
+        <button class="schedule-button schedule-enabled" id="toggleScheduleBtn" onclick="toggleSchedule()">🔄 Enable Schedule</button>
+        <button class="schedule-button schedule-toggle" onclick="clearAllRanges()">🗑️ Clear All</button>
+      </div>
+    </div>
+
     <!-- Status Display -->
     <div class="control-section">
       <h3>📊 System Status</h3>
@@ -71,6 +173,8 @@
         <div class="status-item"><span class="status-label">Last Changed:</span><span class="status-value" id="lastChanged">--</span></div>
         <div class="status-item"><span class="status-label">Total Switches:</span><span class="status-value" id="totalSwitches">0</span></div>
         <div class="status-item"><span class="status-label">System Health:</span><span class="status-value" id="systemHealth">OK</span></div>
+        <div class="status-item"><span class="status-label">Timer Status:</span><span class="status-value" id="timerStatusValue">Inactive</span></div>
+        <div class="status-item"><span class="status-label">Schedule Status:</span><span class="status-value" id="scheduleStatusValue">Disabled</span></div>
       </div>
     </div>
   </div>
@@ -112,11 +216,40 @@
     const systemHealthEl = document.getElementById('systemHealth');
     const usageLogContainer = document.getElementById('usageLogContainer');
 
+    // Timer UI refs
+    const hoursInput = document.getElementById('hoursInput');
+    const minutesInput = document.getElementById('minutesInput');
+    const secondsInput = document.getElementById('secondsInput');
+    const startTimerBtn = document.getElementById('startTimerBtn');
+    const cancelTimerBtn = document.getElementById('cancelTimerBtn');
+    const timerStatus = document.getElementById('timerStatus');
+    const timerCountdown = document.getElementById('timerCountdown');
+    const timerAction = document.getElementById('timerAction');
+    const timerStatusValue = document.getElementById('timerStatusValue');
+
+    // Schedule UI refs
+    const timeRangesContainer = document.getElementById('timeRangesContainer');
+    const toggleScheduleBtn = document.getElementById('toggleScheduleBtn');
+    const scheduleStatusText = document.getElementById('scheduleStatusText');
+    const currentRangeText = document.getElementById('currentRangeText');
+    const scheduleStatusValue = document.getElementById('scheduleStatusValue');
+
     // ======== Local state ========
     let isConnected = false;
     let startTime = Date.now();
     let currentOutletState = false;
     let totalSwitches = 0;
+
+    // Timer state
+    let timerInterval = null;
+    let timerEndTime = null;
+    let timerTargetState = null;
+
+    // Schedule state
+    let scheduleEnabled = false;
+    let timeRanges = [];
+    let scheduleInterval = null;
+    let rangeIdCounter = 1;
 
     // ======== Utils ========
     const fmtTime = (d) => new Date(d).toLocaleTimeString();
@@ -160,11 +293,27 @@
       totalSwitchesEl.textContent = totalSwitches;
     }
 
-    function addLogEntry(action) {
+    function addLogEntry(action, type = 'manual') {
       const entry = document.createElement('div');
-      entry.className = `log-entry ${action ? 'on' : 'off'}`;
+      let actionClass, actionText;
+      
+      switch(type) {
+        case 'timer':
+          actionClass = 'timer';
+          actionText = `Timer: ${action ? 'Turned ON' : 'Turned OFF'}`;
+          break;
+        case 'schedule':
+          actionClass = 'schedule';
+          actionText = `Schedule: ${action ? 'Turned ON' : 'Turned OFF'}`;
+          break;
+        default:
+          actionClass = action ? 'on' : 'off';
+          actionText = action ? 'Turned ON' : 'Turned OFF';
+      }
+      
+      entry.className = `log-entry ${actionClass}`;
       entry.innerHTML = `
-        <span class="log-action ${action ? 'on' : 'off'}">${action ? 'Turned ON' : 'Turned OFF'}</span>
+        <span class="log-action ${actionClass}">${actionText}</span>
         <span class="log-time">${new Date().toLocaleTimeString()}</span>
       `;
       const first = usageLogContainer.firstElementChild;
@@ -172,7 +321,7 @@
       else usageLogContainer.appendChild(entry);
 
       const entries = usageLogContainer.querySelectorAll('.log-entry');
-      if (entries.length > 11) usageLogContainer.removeChild(entries[entries.length - 1]);
+      if (entries.length > 15) usageLogContainer.removeChild(entries[entries.length - 1]);
     }
 
     window.clearUsageLog = function () {
@@ -180,6 +329,324 @@
       usageLogContainer.innerHTML = '';
       if (first) usageLogContainer.appendChild(first);
     };
+
+    // ======== Timer Functions ========
+    window.setQuickTimer = function(hours, minutes, seconds) {
+      hoursInput.value = hours;
+      minutesInput.value = minutes;
+      secondsInput.value = seconds;
+    };
+
+    window.startTimer = function() {
+      const hours = parseInt(hoursInput.value) || 0;
+      const minutes = parseInt(minutesInput.value) || 0;
+      const seconds = parseInt(secondsInput.value) || 0;
+      
+      const totalSeconds = hours * 3600 + minutes * 60 + seconds;
+      
+      if (totalSeconds <= 0) {
+        alert('Please set a timer duration greater than 0');
+        return;
+      }
+      
+      // Determine what state to switch to
+      timerTargetState = !currentOutletState;
+      timerEndTime = Date.now() + (totalSeconds * 1000);
+      
+      // Update UI
+      startTimerBtn.style.display = 'none';
+      cancelTimerBtn.style.display = 'block';
+      timerStatus.style.display = 'block';
+      timerAction.textContent = `Will turn ${timerTargetState ? 'ON' : 'OFF'} in:`;
+      timerStatusValue.textContent = 'Active';
+      timerStatusValue.style.color = '#ffd700';
+      
+      // Add log entry
+      const entry = document.createElement('div');
+      entry.className = 'log-entry timer';
+      entry.innerHTML = `
+        <span class="log-action timer">Timer started (${hours}h ${minutes}m ${seconds}s → ${timerTargetState ? 'ON' : 'OFF'})</span>
+        <span class="log-time">${new Date().toLocaleTimeString()}</span>
+      `;
+      const first = usageLogContainer.firstElementChild;
+      if (first) usageLogContainer.insertBefore(entry, first.nextSibling);
+      
+      // Start countdown
+      timerInterval = setInterval(updateTimer, 1000);
+      updateTimer(); // Initial update
+    };
+
+    window.cancelTimer = function() {
+      if (timerInterval) {
+        clearInterval(timerInterval);
+        timerInterval = null;
+      }
+      
+      timerEndTime = null;
+      timerTargetState = null;
+      
+      // Update UI
+      startTimerBtn.style.display = 'block';
+      cancelTimerBtn.style.display = 'none';
+      timerStatus.style.display = 'none';
+      timerStatusValue.textContent = 'Inactive';
+      timerStatusValue.style.color = '#ffd700';
+      
+      // Add log entry
+      const entry = document.createElement('div');
+      entry.className = 'log-entry timer';
+      entry.innerHTML = `
+        <span class="log-action timer">Timer cancelled</span>
+        <span class="log-time">${new Date().toLocaleTimeString()}</span>
+      `;
+      const first = usageLogContainer.firstElementChild;
+      if (first) usageLogContainer.insertBefore(entry, first.nextSibling);
+    };
+
+    function updateTimer() {
+      if (!timerEndTime) return;
+      
+      const remaining = Math.max(0, timerEndTime - Date.now());
+      
+      if (remaining <= 0) {
+        // Timer finished - execute the switch
+        executeTimerSwitch();
+        return;
+      }
+      
+      // Update countdown display
+      const totalSeconds = Math.floor(remaining / 1000);
+      const hours = Math.floor(totalSeconds / 3600);
+      const minutes = Math.floor((totalSeconds % 3600) / 60);
+      const seconds = totalSeconds % 60;
+      
+      timerCountdown.textContent = 
+        `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+    }
+
+    async function executeTimerSwitch() {
+      try {
+        // Switch the outlet
+        await restPUT(PATHS.outlet, {
+          state: timerTargetState,
+          lastChanged: Date.now(),
+          totalSwitches: (totalSwitches ?? 0) + 1,
+          uptime: Math.floor((Date.now() - startTime) / 1000)
+        });
+
+        // Log the action
+        await restPUT(PATHS.logs, {
+          action: timerTargetState,
+          at: Date.now()
+        });
+
+        // Update UI
+        addLogEntry(timerTargetState, 'timer');
+        drawOutlet(timerTargetState, Date.now(), (totalSwitches ?? 0) + 1);
+        updateConnectionStatus(true);
+        
+        // Clean up timer
+        cancelTimer();
+        
+      } catch (e) {
+        console.error('Timer switch error:', e.message);
+        updateConnectionStatus(false);
+        cancelTimer();
+      }
+    }
+
+    // ======== Schedule Functions ========
+    window.addTimeRange = function() {
+      const range = {
+        id: rangeIdCounter++,
+        startHour: 9,
+        startMinute: 0,
+        endHour: 17,
+        endMinute: 0
+      };
+      
+      timeRanges.push(range);
+      renderTimeRanges();
+    };
+
+    window.deleteTimeRange = function(id) {
+      timeRanges = timeRanges.filter(range => range.id !== id);
+      renderTimeRanges();
+    };
+
+    window.clearAllRanges = function() {
+      timeRanges = [];
+      renderTimeRanges();
+      
+      // Add log entry
+      const entry = document.createElement('div');
+      entry.className = 'log-entry schedule';
+      entry.innerHTML = `
+        <span class="log-action schedule">All time ranges cleared</span>
+        <span class="log-time">${new Date().toLocaleTimeString()}</span>
+      `;
+      const first = usageLogContainer.firstElementChild;
+      if (first) usageLogContainer.insertBefore(entry, first.nextSibling);
+    };
+
+    window.toggleSchedule = function() {
+      scheduleEnabled = !scheduleEnabled;
+      
+      if (scheduleEnabled) {
+        toggleScheduleBtn.textContent = '⏸️ Disable Schedule';
+        toggleScheduleBtn.className = 'schedule-button schedule-toggle';
+        scheduleStatusText.textContent = 'Enabled';
+        scheduleStatusValue.textContent = 'Active';
+        scheduleStatusValue.style.color = '#9b59b6';
+        
+        // Start schedule checking
+        if (scheduleInterval) clearInterval(scheduleInterval);
+        scheduleInterval = setInterval(checkSchedule, 60000); // Check every minute
+        checkSchedule(); // Initial check
+        
+      } else {
+        toggleScheduleBtn.textContent = '🔄 Enable Schedule';
+        toggleScheduleBtn.className = 'schedule-button schedule-enabled';
+        scheduleStatusText.textContent = 'Disabled';
+        scheduleStatusValue.textContent = 'Disabled';
+        scheduleStatusValue.style.color = '#ffd700';
+        currentRangeText.textContent = 'No active ranges';
+        
+        // Stop schedule checking
+        if (scheduleInterval) {
+          clearInterval(scheduleInterval);
+          scheduleInterval = null;
+        }
+      }
+      
+      // Add log entry
+      const entry = document.createElement('div');
+      entry.className = 'log-entry schedule';
+      entry.innerHTML = `
+        <span class="log-action schedule">Schedule ${scheduleEnabled ? 'enabled' : 'disabled'}</span>
+        <span class="log-time">${new Date().toLocaleTimeString()}</span>
+      `;
+      const first = usageLogContainer.firstElementChild;
+      if (first) usageLogContainer.insertBefore(entry, first.nextSibling);
+    };
+
+    function renderTimeRanges() {
+      if (timeRanges.length === 0) {
+        timeRangesContainer.innerHTML = '<div class="no-ranges">No time ranges configured</div>';
+        return;
+      }
+      
+      timeRangesContainer.innerHTML = timeRanges.map(range => `
+        <div class="time-range-group">
+          <div class="time-range-header">
+            <span class="time-range-title">Range ${range.id}</span>
+            <button class="delete-range-btn" onclick="deleteTimeRange(${range.id})">✕</button>
+          </div>
+          <div class="time-inputs">
+            <input type="number" class="time-input" min="0" max="23" value="${range.startHour}" 
+                   onchange="updateRange(${range.id}, 'startHour', this.value)" placeholder="HH">
+            <span>:</span>
+            <input type="number" class="time-input" min="0" max="59" value="${range.startMinute}" 
+                   onchange="updateRange(${range.id}, 'startMinute', this.value)" placeholder="MM">
+            <span class="time-separator">→</span>
+            <input type="number" class="time-input" min="0" max="23" value="${range.endHour}" 
+                   onchange="updateRange(${range.id}, 'endHour', this.value)" placeholder="HH">
+            <span>:</span>
+            <input type="number" class="time-input" min="0" max="59" value="${range.endMinute}" 
+                   onchange="updateRange(${range.id}, 'endMinute', this.value)" placeholder="MM">
+          </div>
+        </div>
+      `).join('');
+    }
+
+    window.updateRange = function(id, field, value) {
+      const range = timeRanges.find(r => r.id === id);
+      if (range) {
+        range[field] = parseInt(value) || 0;
+        
+        // Validate time ranges
+        if (field.includes('Hour') && (value < 0 || value > 23)) {
+          range[field] = Math.max(0, Math.min(23, range[field]));
+        }
+        if (field.includes('Minute') && (value < 0 || value > 59)) {
+          range[field] = Math.max(0, Math.min(59, range[field]));
+        }
+        
+        renderTimeRanges();
+      }
+    };
+
+    function checkSchedule() {
+      if (!scheduleEnabled || timeRanges.length === 0) return;
+      
+      const now = new Date();
+      const currentHour = now.getHours();
+      const currentMinute = now.getMinutes();
+      const currentTime = currentHour * 60 + currentMinute;
+      
+      let shouldBeOn = false;
+      let activeRange = null;
+      
+      for (const range of timeRanges) {
+        const startTime = range.startHour * 60 + range.startMinute;
+        const endTime = range.endHour * 60 + range.endMinute;
+        
+        let inRange = false;
+        
+        if (startTime <= endTime) {
+          // Same day range (e.g., 9:00 - 17:00)
+          inRange = currentTime >= startTime && currentTime < endTime;
+        } else {
+          // Cross-midnight range (e.g., 22:00 - 6:00)
+          inRange = currentTime >= startTime || currentTime < endTime;
+        }
+        
+        if (inRange) {
+          shouldBeOn = true;
+          activeRange = range;
+          break;
+        }
+      }
+      
+      // Update current range display
+      if (activeRange) {
+        const startStr = `${String(activeRange.startHour).padStart(2, '0')}:${String(activeRange.startMinute).padStart(2, '0')}`;
+        const endStr = `${String(activeRange.endHour).padStart(2, '0')}:${String(activeRange.endMinute).padStart(2, '0')}`;
+        currentRangeText.textContent = `Active: ${startStr} - ${endStr}`;
+      } else {
+        currentRangeText.textContent = 'No active ranges';
+      }
+      
+      // Switch if needed
+      if (shouldBeOn !== currentOutletState) {
+        executeScheduleSwitch(shouldBeOn);
+      }
+    }
+
+    async function executeScheduleSwitch(newState) {
+      try {
+        await restPUT(PATHS.outlet, {
+          state: newState,
+          lastChanged: Date.now(),
+          totalSwitches: (totalSwitches ?? 0) + 1,
+          uptime: Math.floor((Date.now() - startTime) / 1000)
+        });
+
+        await restPUT(PATHS.logs, {
+          action: newState,
+          at: Date.now()
+        });
+
+        // Update UI
+        addLogEntry(newState, 'schedule');
+        drawOutlet(newState, Date.now(), (totalSwitches ?? 0) + 1);
+        updateConnectionStatus(true);
+        
+      } catch (e) {
+        console.error('Schedule switch error:', e.message);
+        updateConnectionStatus(false);
+      }
+    }
 
     // ======== REST helpers ========
     async function restGET(path) {
